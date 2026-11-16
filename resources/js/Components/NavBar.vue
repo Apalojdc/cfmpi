@@ -8,10 +8,11 @@ type Lien = { label: string; href: string };
 // transparent = false : la barre est toujours blanche (pages sans grand visuel en haut)
 const props = withDefaults(defineProps<{ transparent?: boolean }>(), { transparent: true });
 
-// ---------- Logos (mets une version blanche pour le fond transparent si tu en as une) ----------
+// ---------- Infos du CFMPI (d'après le prospectus) ----------
 const logoClair = '/img/logo/logo.png'; // affiché sur fond transparent
 const logoSombre = '/img/logo/logo.png'; // affiché sur fond blanc
 const telephone = '07 49 68 92 49';
+const email = 'diallofouseni863@gmail.com';
 
 // Slogan affiché à côté du logo quand on a scrollé (2 lignes)
 const slogan = ['La compétence d’aujourd’hui,', 'l’industrie de demain.'];
@@ -23,101 +24,59 @@ const urlRecherche = '/recherche';
 const chemins = {
     tel: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z',
     mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6',
-    user: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
-    star: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
+    pin: 'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
     search: 'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35',
-    menu: 'M4 6h16M4 12h16M4 18h16',
+    menu: 'M4 6h16M4 18h16M4 12h16',
     close: 'M6 6l12 12M18 6L6 18',
 };
 
 // ---------- Données des menus : modifie ici ----------
 const f = (label: string, slug: string): Lien => ({ label, href: `/formations/${slug}` });
 
-// Technique & Maintenance : 2 colonnes, la 1re est coupée en 2 groupes
-const technique: Lien[][][] = [
-    [
-        [
-            f('Maintenance', 'maintenance'),
-            f('Production', 'production'),
-            f('Management des équipes et Communication', 'management'),
-            f('Maîtrise des énergies', 'maitrise-des-energies'),
-        ],
-        [
-            f('Électricité – Électrotechnique', 'electricite'),
-            f('Variation de vitesse', 'variation-de-vitesse'),
-            f('Automatismes – Supervision – Réseaux', 'automatismes'),
-            f('Robotique – Vision', 'robotique'),
-            f('Régulation', 'regulation'),
-        ],
-    ],
-    [
-        [
-            f('Mécanique – CAO – Impression 3D', 'mecanique'),
-            f('Pompes – Vannes', 'pompes-vannes'),
-            f('Oléohydraulique', 'oleohydraulique'),
-            f('Pneumatique', 'pneumatique'),
-            f('Soudage', 'soudage'),
-            f('Usinage – Matériaux', 'usinage'),
-            f('Froid – Climatisation', 'froid-climatisation'),
-            f('Air – Gaz – Vapeur – Vide', 'air-gaz-vapeur-vide'),
-        ],
-    ],
+// Domaine 1 : Maintenance industrielle
+const maintenance: Lien[] = [
+    f('Maintenance Mécanique Industrielle', 'maintenance-mecanique'),
+    f('Maintenance Électrique Industrielle', 'maintenance-electrique'),
+    f('Maintenance Électromécanique', 'maintenance-electromecanique'),
+    f('Automatisme Industriel', 'automatisme-industriel'),
+    f('Diagnostic et Dépannage des Équipements', 'diagnostic-depannage'),
+    f('Maintenance Préventive et Améliorative', 'maintenance-preventive-ameliorative'),
 ];
 
-const prevention: Lien[] = [
-    f('Risque Électrique – Habilitation Électrique', 'risque-electrique'),
-    f('Équipements sous pression – Autoclaves', 'equipements-sous-pression'),
-    f('Risque ATEX lié aux atmosphères explosives', 'atex'),
-    f('Habilitation Mécanique – Consignation des énergies', 'habilitation-mecanique'),
-    f('Risque Ammoniac', 'ammoniac'),
-    f('Risques chimiques', 'risques-chimiques'),
-    f('Risque Travaux en hauteur – Port du Harnais', 'travaux-hauteur-harnais'),
-    f('Risque Travaux en hauteur – Échafaudage roulant', 'travaux-hauteur-echafaudage'),
+// Domaine 2 : Production industrielle
+const production: Lien[] = [
+    f('Conduite et Surveillance des Procédés Industriels', 'conduite-procedes'),
+    f('Gestion de la Production', 'gestion-production'),
+    f('Qualité et Amélioration Continue', 'qualite-amelioration-continue'),
+    f('Sécurité, Hygiène et Environnement Industriel', 'securite-hygiene-environnement'),
+    f('Lecture et Interprétation de Plans Industriels', 'lecture-plans-industriels'),
 ];
 
-const solutions: (Lien & { icone: string })[] = [
-    { icone: '⇄', label: 'Formations Inter', href: '/formations-inter' },
-    { icone: '📏', label: 'Formations Sur mesure', href: '/formations-sur-mesure' },
-    { icone: '💻', label: 'Formations E-learning', href: '/formations-e-learning' },
-    { icone: '🎓', label: 'Notre méthode pédagogique', href: '/methode-pedagogique' },
-    { icone: '⬇', label: 'Télécharger le catalogue / domaines', href: '/catalogue' },
+// Nos atouts (colonne colorée du méga-menu)
+const atouts: { icone: string; label: string }[] = [
+    { icone: '🔧', label: 'Formations 100 % pratiques' },
+    { icone: '🏭', label: 'Plateaux techniques équipés et modernes' },
+    { icone: '👷', label: 'Encadrement par des professionnels' },
+    { icone: '🤝', label: 'Suivi personnalisé' },
+    { icone: '🎓', label: 'Accompagnement à l’insertion professionnelle' },
 ];
 
 // Petits menus déroulants (liens à adapter à tes routes)
 const simples: { id: string; label: string; liens: Lien[] }[] = [
     {
-        id: 'evaluer',
-        label: 'Évaluer',
-        liens: [
-            { label: 'Évaluation à distance', href: '/evaluation/distance' },
-            { label: 'Évaluation sur site', href: '/evaluation/site' },
-        ],
-    },
-    {
-        id: 'CFMPI',
+        id: 'cfmpi',
         label: 'Le CFMPI',
         liens: [
             { label: 'Présentation', href: '/a-propos' },
             { label: 'Actualités', href: '/actualites' },
-            { label: 'Recrutement', href: '/recrutement' },
-        ],
-    },
-    {
-        id: 'infos',
-        label: 'Infos pratiques',
-        liens: [
-            { label: 'Financement', href: '/infos/financement' },
-            { label: 'Accès', href: '/infos/acces' },
-            { label: 'Questions fréquentes', href: '/infos/faq' },
+            { label: 'Accès – Cocody, Riviera Faya', href: '/acces' },
         ],
     },
 ];
 
 // "icone" sert dans le menu mobile, "chemin" dans la barre du haut (SVG)
 const liensHaut: (Lien & { icone: string; chemin: string })[] = [
-    { icone: '✉', chemin: chemins.mail, label: 'Nous contacter', href: '/contact' },
-    { icone: '👤', chemin: chemins.user, label: 'Espace client', href: '/espace-client' },
-    { icone: '★', chemin: chemins.star, label: 'Favoris', href: '/favoris' },
+    { icone: '📍', chemin: chemins.pin, label: 'Nous trouver', href: '/acces' },
 ];
 
 // ---------- État ----------
@@ -170,9 +129,9 @@ onUnmounted(() => {
         @mouseleave="menuActif = null"
     >
         <div class="inner">
-            <!-- Logo + slogan (le slogan n'apparaît qu'après scroll) -->
-            <Link href="/" class="logo" aria-label="Accueil" @click="fermer">
-                <img :src="clair ? logoClair : logoSombre" alt="Logo" class="logo-img" />
+            <!-- Logo + slogan (blanc en haut de page, vert après scroll) -->
+            <Link href="/" class="logo" aria-label="CFMPI – Accueil" @click="fermer">
+                <img :src="clair ? logoClair : logoSombre" alt="CFMPI" class="logo-img" />
                 <span class="slogan">
                     <template v-for="(ligne, i) in slogan" :key="i">{{ ligne }}<br v-if="i < slogan.length - 1" /></template>
                 </span>
@@ -184,7 +143,7 @@ onUnmounted(() => {
                     <input
                         v-model="recherche"
                         type="search"
-                        placeholder="Recherche..."
+                        placeholder="Rechercher une formation..."
                         aria-label="Rechercher une formation"
                     />
                     <button type="submit" aria-label="Lancer la recherche">
@@ -195,9 +154,15 @@ onUnmounted(() => {
                 <!-- Rangée du haut (devient le bandeau coloré après scroll) -->
                 <ul class="haut">
                     <li>
-                        <a :href="`tel:${telephone}`">
+                        <a :href="`tel:${telephone.replace(/\s/g, '')}`">
                             <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path :d="chemins.tel" /></svg>
                             {{ telephone }}
+                        </a>
+                    </li>
+                    <li class="cache-petit">
+                        <a :href="`mailto:${email}`">
+                            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path :d="chemins.mail" /></svg>
+                            {{ email }}
                         </a>
                     </li>
                     <li v-for="l in liensHaut" :key="l.href" class="cache-petit">
@@ -211,53 +176,50 @@ onUnmounted(() => {
                 <!-- Rangée principale (ordinateur, en haut de page) -->
                 <ul class="bas" aria-label="Navigation principale">
                     <li class="item" @mouseenter="menuActif = null">
-                        <Link href="/" aria-label="Accueil">🏠</Link>
+                        <Link href="/" aria-label="Accueil">Accueil</Link>
                     </li>
 
-                    <!-- Méga-menu Former -->
+                    <!-- Méga-menu Formations -->
                     <li
                         class="item"
-                        :class="{ ouvert: menuActif === 'former' }"
-                        @mouseenter="menuActif = 'former'"
-                        @focusin="menuActif = 'former'"
+                        :class="{ ouvert: menuActif === 'formations' }"
+                        @mouseenter="menuActif = 'formations'"
+                        @focusin="menuActif = 'formations'"
                     >
-                        <button type="button" class="bouton" :aria-expanded="menuActif === 'former'" @click="basculer('former')">
-                            Former <span class="chev">▾</span>
+                        <button type="button" class="bouton" :aria-expanded="menuActif === 'formations'" @click="basculer('formations')">
+                            Nos formations <span class="chev">▾</span>
                         </button>
-                        <div v-show="menuActif === 'former'" class="mega">
-                            <div class="m-tech">
-                                <h3>Technique &amp; Maintenance</h3>
-                                <div class="m-cols">
-                                    <div v-for="(col, i) in technique" :key="i">
-                                        <ul v-for="(groupe, j) in col" :key="j" class="groupe">
-                                            <li v-for="l in groupe" :key="l.href">
-                                                <Link :href="l.href" @click="fermer">{{ l.label }}</Link>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="m-prev">
-                                <h3>Prévention des risques</h3>
+                        <div v-show="menuActif === 'formations'" class="mega">
+                            <div class="m-maint">
+                                <h3>Maintenance industrielle</h3>
                                 <ul>
-                                    <li v-for="l in prevention" :key="l.href">
+                                    <li v-for="l in maintenance" :key="l.href">
+                                        <Link :href="l.href" @click="fermer">{{ l.label }}</Link>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="m-prod">
+                                <h3>Production industrielle</h3>
+                                <ul>
+                                    <li v-for="l in production" :key="l.href">
                                         <Link :href="l.href" @click="fermer">{{ l.label }}</Link>
                                     </li>
                                 </ul>
                             </div>
                             <div class="m-sol">
-                                <h3>Solutions de formation</h3>
+                                <h3>Nos atouts</h3>
                                 <ul>
-                                    <li v-for="s in solutions" :key="s.href">
-                                        <Link :href="s.href" @click="fermer"><span class="ico">{{ s.icone }}</span>{{ s.label }}</Link>
+                                    <li v-for="a in atouts" :key="a.label">
+                                        <Link href="/#atouts" @click="fermer"><span class="ico">{{ a.icone }}</span>{{ a.label }}</Link>
                                     </li>
                                 </ul>
+                                <Link href="/formations" class="m-tout" @click="fermer">Voir toutes les formations →</Link>
                             </div>
                         </div>
                     </li>
 
                     <li class="item" @mouseenter="menuActif = null">
-                        <Link href="/accompagnement" class="bouton">Accompagner</Link>
+                        <Link href="/#pour-qui" class="bouton">Pour qui ?</Link>
                     </li>
 
                     <!-- Petits menus déroulants -->
@@ -280,7 +242,11 @@ onUnmounted(() => {
                     </li>
 
                     <li class="item" @mouseenter="menuActif = null">
-                        <Link href="/catalogue" class="pill">Téléchargements ⬇</Link>
+                        <Link href="/contact" class="bouton">Contact</Link>
+                    </li>
+
+                    <li class="item" @mouseenter="menuActif = null">
+                        <Link href="/inscription" class="pill">Inscrivez-vous</Link>
                     </li>
                 </ul>
 
@@ -302,7 +268,7 @@ onUnmounted(() => {
         <!-- Panneau du hamburger -->
         <nav v-if="menuOuvert" class="panneau" aria-label="Menu">
             <form class="recherche-mobile" role="search" @submit.prevent="lancerRecherche">
-                <input v-model="recherche" type="search" placeholder="Recherche..." aria-label="Rechercher une formation" />
+                <input v-model="recherche" type="search" placeholder="Rechercher une formation..." aria-label="Rechercher une formation" />
                 <button type="submit" aria-label="Lancer la recherche">
                     <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path :d="chemins.search" /></svg>
                 </button>
@@ -311,30 +277,28 @@ onUnmounted(() => {
             <Link href="/" class="p-lien" @click="fermer">🏠 Accueil</Link>
 
             <details class="p-groupe">
-                <summary>Former</summary>
-                <p class="p-titre">Technique &amp; Maintenance</p>
-                <template v-for="(col, i) in technique" :key="i">
-                    <ul v-for="(groupe, j) in col" :key="j">
-                        <li v-for="l in groupe" :key="l.href">
-                            <Link :href="l.href" @click="fermer">{{ l.label }}</Link>
-                        </li>
-                    </ul>
-                </template>
-                <p class="p-titre">Prévention des risques</p>
+                <summary>Nos formations</summary>
+                <p class="p-titre">Maintenance industrielle</p>
                 <ul>
-                    <li v-for="l in prevention" :key="l.href">
+                    <li v-for="l in maintenance" :key="l.href">
                         <Link :href="l.href" @click="fermer">{{ l.label }}</Link>
                     </li>
                 </ul>
-                <p class="p-titre">Solutions de formation</p>
+                <p class="p-titre">Production industrielle</p>
                 <ul>
-                    <li v-for="s in solutions" :key="s.href">
-                        <Link :href="s.href" @click="fermer">{{ s.icone }} {{ s.label }}</Link>
+                    <li v-for="l in production" :key="l.href">
+                        <Link :href="l.href" @click="fermer">{{ l.label }}</Link>
+                    </li>
+                </ul>
+                <p class="p-titre">Nos atouts</p>
+                <ul>
+                    <li v-for="a in atouts" :key="a.label">
+                        <Link href="/#atouts" @click="fermer">{{ a.icone }} {{ a.label }}</Link>
                     </li>
                 </ul>
             </details>
 
-            <Link href="/accompagnement" class="p-lien" @click="fermer">Accompagner</Link>
+            <Link href="/#pour-qui" class="p-lien" @click="fermer">Pour qui ?</Link>
 
             <details v-for="m in simples" :key="m.id" class="p-groupe">
                 <summary>{{ m.label }}</summary>
@@ -345,18 +309,23 @@ onUnmounted(() => {
                 </ul>
             </details>
 
+            <Link href="/contact" class="p-lien" @click="fermer">Contact</Link>
+
             <div class="p-bas">
+                <a :href="`tel:${telephone.replace(/\s/g, '')}`">📞 {{ telephone }}</a>
+                <a :href="`mailto:${email}`">✉ {{ email }}</a>
                 <Link v-for="l in liensHaut" :key="l.href" :href="l.href" @click="fermer">{{ l.icone }} {{ l.label }}</Link>
             </div>
-            <Link href="/catalogue" class="pill p-pill" @click="fermer">Téléchargements ⬇</Link>
+            <Link href="/inscription" class="pill p-pill" @click="fermer">Inscrivez-vous</Link>
         </nav>
     </header>
 </template>
 
 <style scoped>
 .navbar {
-    --accent: #007013; /* couleur principale : change-la ici */
-    --secondaire: #0b3d91; /* bouton de recherche */
+    --accent: #007013; /* vert du logo : couleur principale */
+    --orange: #f07a1a; /* orange du logo / prospectus : bouton d'inscription */
+    --secondaire: #0d2a5c; /* bleu marine du prospectus : bouton de recherche */
     --encre: #14213a;
     --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
     top: 0;
@@ -403,14 +372,20 @@ onUnmounted(() => {
 .logo { flex-shrink: 0; display: flex; align-items: center; gap: 0.75rem; }
 .logo-img { display: block; height: 72px; width: auto; transition: height 0.25s var(--ease); background: #fff; border-radius: 8px; }
 
-/* Slogan : seulement après scroll */
+/* Slogan : blanc en haut de page (fond transparent), vert après scroll */
 .slogan {
-    display: none;
+    display: block;
     color: var(--accent);
     font-weight: 700;
     font-size: 0.9rem;
     line-height: 1.25;
     text-shadow: none;
+    transition: color 0.25s;
+    text-transform: uppercase;
+}
+.navbar.clair .slogan {
+    color: #fff;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
 }
 
 a { text-decoration: none; color: inherit; }
@@ -460,9 +435,10 @@ ul { list-style: none; margin: 0; padding: 0; }
 .clair .item.ouvert > .bouton { color: #fff; text-decoration: underline; text-underline-offset: 6px; }
 .chev { font-size: 0.75em; }
 
+/* Bouton d'inscription (orange du prospectus) */
 .pill {
     display: inline-block;
-    background: var(--accent);
+    background: var(--orange);
     color: #fff !important;
     font-weight: 700;
     text-transform: uppercase;
@@ -471,17 +447,18 @@ ul { list-style: none; margin: 0; padding: 0; }
     border-radius: 99px !important;
     text-shadow: none !important;
     margin-left: 0.5rem;
+    box-shadow: 0 6px 16px rgba(240, 122, 26, 0.3);
 }
 .pill:hover { filter: brightness(1.08); }
 
-/* Méga-menu */
+/* Méga-menu : Maintenance | Production | Atouts */
 .mega {
     position: absolute;
     top: 100%;
     left: 1.25rem;
     right: 1.25rem;
     display: grid;
-    grid-template-columns: 1.7fr 1.1fr 1fr;
+    grid-template-columns: 1.2fr 1.2fr 1fr;
     background: #fff;
     color: var(--encre);
     text-shadow: none;
@@ -497,16 +474,23 @@ ul { list-style: none; margin: 0; padding: 0; }
     border-left: 4px solid var(--accent);
     padding-left: 0.6rem;
 }
-.m-tech, .m-prev { padding: 1.75rem 2rem; }
-.m-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.5rem; }
-.m-cols > div + div { border-left: 1px solid #e3e8f0; padding-left: 1.5rem; }
-.groupe + .groupe { border-top: 1px solid #e3e8f0; margin-top: 0.75rem; padding-top: 0.75rem; }
+.m-prod h3 { border-color: var(--orange); }
+.m-maint, .m-prod { padding: 1.75rem 2rem; }
+.m-prod { border-left: 1px solid #e3e8f0; }
 .mega li a { display: block; padding: 0.35rem 0; color: #3b4660; font-weight: 500; line-height: 1.35; }
 .mega li a:hover { color: var(--accent); }
-.m-sol { background: var(--accent); color: #fff; padding: 1.75rem 2rem; }
-.m-sol h3 { border-color: #fff; }
+.m-prod li a:hover { color: var(--orange); }
+.m-sol { background: var(--secondaire); color: #fff; padding: 1.75rem 2rem; }
+.m-sol h3 { border-color: var(--orange); }
 .m-sol li a { color: #fff; font-weight: 600; }
 .m-sol li a:hover { color: #fff; text-decoration: underline; }
+.m-tout {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--orange);
+    font-weight: 700;
+}
+.m-tout:hover { text-decoration: underline; }
 .ico { display: inline-block; width: 1.6rem; }
 
 /* Petit menu déroulant */
@@ -515,7 +499,7 @@ ul { list-style: none; margin: 0; padding: 0; }
     top: 100%;
     left: 50%;
     transform: translateX(-50%);
-    min-width: 240px;
+    min-width: 260px;
     background: #fff;
     color: var(--encre);
     text-shadow: none;
@@ -547,7 +531,6 @@ ul { list-style: none; margin: 0; padding: 0; }
    ====================================================== */
 .scrolled .inner { padding-top: 0.55rem; padding-bottom: 0.55rem; }
 .scrolled .logo-img { height: 52px; }
-.scrolled .slogan { display: block; }
 
 .scrolled .droite { flex: 1; flex-direction: row; align-items: center; justify-content: flex-end; gap: 1rem; }
 .scrolled .bas { display: none; }
@@ -568,7 +551,7 @@ ul { list-style: none; margin: 0; padding: 0; }
     transition: box-shadow 0.2s;
     animation: apparait 0.35s var(--ease) both;
 }
-.recherche:focus-within { box-shadow: 0 0 0 3px rgba(11, 61, 145, 0.3); }
+.recherche:focus-within { box-shadow: 0 0 0 3px rgba(13, 42, 92, 0.3); }
 .recherche input {
     flex: 1;
     min-width: 0;
@@ -594,7 +577,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 .recherche button:hover { filter: brightness(1.15); }
 .recherche button .i { width: 22px; height: 22px; }
 
-/* Bandeau coloré avec téléphone / contact / espace client / favoris */
+/* Bandeau coloré avec téléphone / e-mail / adresse */
 .scrolled .haut {
     gap: 1.6rem;
     padding: 0.75rem 1.4rem;
@@ -614,7 +597,8 @@ ul { list-style: none; margin: 0; padding: 0; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1180px) {
-    .scrolled .slogan { display: none; }
+    .slogan { display: none; }
+    .scrolled .haut { gap: 1.1rem; }
 }
 @media (max-width: 1000px) {
     .droite { flex-direction: row; align-items: center; gap: 1rem; }
@@ -685,10 +669,10 @@ ul { list-style: none; margin: 0; padding: 0; }
 .p-groupe ul { padding-left: 0.5rem; }
 .p-groupe li a { display: block; padding: 0.4rem 0; color: #3b4660; }
 .p-groupe li a:hover { color: var(--accent); }
-.p-bas { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; padding: 1rem 0.25rem; font-weight: 600; }
+.p-bas { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem 0.25rem; font-weight: 600; }
 .p-pill { display: block; text-align: center; margin: 0; }
 
-a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid #f28c00; outline-offset: 2px; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
     .navbar, .logo-img, .inner { transition: none; }

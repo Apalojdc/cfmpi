@@ -424,6 +424,11 @@ html { scroll-behavior: smooth; scroll-padding-top: 80px; }
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   overflow-x: clip;
+  background-image: url('/img/logo/logo.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  background-attachment: fixed;
 }
 .cfmpi-page *, .cfmpi-page *::before, .cfmpi-page *::after { box-sizing: border-box; }
 a { color: inherit; }
@@ -520,10 +525,10 @@ a.more:hover .arrow, a.more:focus-visible .arrow { transform: translateX(5px); }
 .tag { align-self: flex-start; background: #e8efff; color: var(--primary); padding: 5px 12px; border-radius: 99px; font-size: 13px; font-weight: 600; }
 .tag.prod { background: #fff4e0; color: #9a5a00; }
 .card.big:has(.tag.prod) { border-left-color: var(--accent); }
-.card.help { background: var(--accent); border-color: var(--accent); border-left-color: #fff; justify-content: center; align-items: flex-start; }
-.card.help h3 { color: #1a1100; }
-.card.help .meta { color: rgba(26, 17, 0, .85); }
-.card.help .btn { background: var(--dark); color: #fff; margin-top: 8px; }
+.card.help { background: #050047; border-color: var(--accent); border-left-color: #fff; justify-content: center; align-items: flex-start; }
+.card.help h3 { color: #ffffff; }
+.card.help .meta { color: rgba(255, 231, 187, 0.85); }
+.card.help .btn { background: green; color: #fff; margin-top: 8px; }
 .card.help .btn:hover { box-shadow: 0 8px 18px rgba(10, 37, 82, .4); }
 
 /* Actualités */
