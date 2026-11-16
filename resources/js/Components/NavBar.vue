@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 
 type Lien = { label: string; href: string };
 
@@ -12,6 +12,23 @@ const props = withDefaults(defineProps<{ transparent?: boolean }>(), { transpare
 const logoClair = '/img/logo/logo.png'; // affiché sur fond transparent
 const logoSombre = '/img/logo/logo.png'; // affiché sur fond blanc
 const telephone = '07 49 68 92 49';
+
+// Slogan affiché à côté du logo quand on a scrollé (2 lignes)
+const slogan = ['La compétence d’aujourd’hui,', 'l’industrie de demain.'];
+
+// Page de résultats de la recherche (à adapter à ta route Laravel)
+const urlRecherche = '/recherche';
+
+// ---------- Icônes (SVG, héritent de la couleur du texte) ----------
+const chemins = {
+    tel: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z',
+    mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 6l-10 7L2 6',
+    user: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+    star: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
+    search: 'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35',
+    menu: 'M4 6h16M4 12h16M4 18h16',
+    close: 'M6 6l12 12M18 6L6 18',
+};
 
 // ---------- Données des menus : modifie ici ----------
 const f = (label: string, slug: string): Lien => ({ label, href: `/formations/${slug}` });
@@ -96,16 +113,18 @@ const simples: { id: string; label: string; liens: Lien[] }[] = [
     },
 ];
 
-const liensHaut: (Lien & { icone: string })[] = [
-    { icone: '✉', label: 'Nous contacter', href: '/contact' },
-    { icone: '👤', label: 'Espace client', href: '/espace-client' },
-    { icone: '★', label: 'Favoris', href: '/favoris' },
+// "icone" sert dans le menu mobile, "chemin" dans la barre du haut (SVG)
+const liensHaut: (Lien & { icone: string; chemin: string })[] = [
+    { icone: '✉', chemin: chemins.mail, label: 'Nous contacter', href: '/contact' },
+    { icone: '👤', chemin: chemins.user, label: 'Espace client', href: '/espace-client' },
+    { icone: '★', chemin: chemins.star, label: 'Favoris', href: '/favoris' },
 ];
 
 // ---------- État ----------
 const scrolled = ref(false); // true quand on a fait défiler la page
 const menuOuvert = ref(false); // menu hamburger
 const menuActif = ref<string | null>(null); // menu déroulant ouvert sur ordinateur
+const recherche = ref('');
 
 // Fond transparent seulement : option activée + haut de page + hamburger fermé
 const clair = computed(() => props.transparent && !scrolled.value && !menuOuvert.value);
@@ -116,6 +135,13 @@ const basculer = (id: string) => {
 const fermer = () => {
     menuActif.value = null;
     menuOuvert.value = false;
+};
+
+const lancerRecherche = () => {
+    const terme = recherche.value.trim();
+    if (!terme) return;
+    fermer();
+    router.get(urlRecherche, { q: terme });
 };
 
 const majScroll = () => {
@@ -144,19 +170,41 @@ onUnmounted(() => {
         @mouseleave="menuActif = null"
     >
         <div class="inner">
-            <!-- Logo -->
+            <!-- Logo + slogan (le slogan n'apparaît qu'après scroll) -->
             <Link href="/" class="logo" aria-label="Accueil" @click="fermer">
                 <img :src="clair ? logoClair : logoSombre" alt="Logo" class="logo-img" />
+                <span class="slogan">
+                    <template v-for="(ligne, i) in slogan" :key="i">{{ ligne }}<br v-if="i < slogan.length - 1" /></template>
+                </span>
             </Link>
 
             <div class="droite">
-                <!-- Rangée du haut -->
+                <!-- Recherche (visible après scroll) -->
+                <form class="recherche" role="search" @submit.prevent="lancerRecherche">
+                    <input
+                        v-model="recherche"
+                        type="search"
+                        placeholder="Recherche..."
+                        aria-label="Rechercher une formation"
+                    />
+                    <button type="submit" aria-label="Lancer la recherche">
+                        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path :d="chemins.search" /></svg>
+                    </button>
+                </form>
+
+                <!-- Rangée du haut (devient le bandeau coloré après scroll) -->
                 <ul class="haut">
                     <li>
-                        <a :href="`tel:${telephone}`">📞 {{ telephone }}</a>
+                        <a :href="`tel:${telephone}`">
+                            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path :d="chemins.tel" /></svg>
+                            {{ telephone }}
+                        </a>
                     </li>
                     <li v-for="l in liensHaut" :key="l.href" class="cache-petit">
-                        <Link :href="l.href">{{ l.icone }} {{ l.label }}</Link>
+                        <Link :href="l.href">
+                            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path :d="l.chemin" /></svg>
+                            {{ l.label }}
+                        </Link>
                     </li>
                 </ul>
 
@@ -241,16 +289,25 @@ onUnmounted(() => {
                     type="button"
                     class="burger"
                     :aria-expanded="menuOuvert"
-                    aria-label="Ouvrir le menu"
+                    :aria-label="menuOuvert ? 'Fermer le menu' : 'Ouvrir le menu'"
                     @click="menuOuvert = !menuOuvert"
                 >
-                    {{ menuOuvert ? '✕' : '☰' }}
+                    <svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+                        <path :d="menuOuvert ? chemins.close : chemins.menu" />
+                    </svg>
                 </button>
             </div>
         </div>
 
         <!-- Panneau du hamburger -->
         <nav v-if="menuOuvert" class="panneau" aria-label="Menu">
+            <form class="recherche-mobile" role="search" @submit.prevent="lancerRecherche">
+                <input v-model="recherche" type="search" placeholder="Recherche..." aria-label="Rechercher une formation" />
+                <button type="submit" aria-label="Lancer la recherche">
+                    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path :d="chemins.search" /></svg>
+                </button>
+            </form>
+
             <Link href="/" class="p-lien" @click="fermer">🏠 Accueil</Link>
 
             <details class="p-groupe">
@@ -299,7 +356,9 @@ onUnmounted(() => {
 <style scoped>
 .navbar {
     --accent: #007013; /* couleur principale : change-la ici */
+    --secondaire: #0b3d91; /* bouton de recherche */
     --encre: #14213a;
+    --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
     top: 0;
     left: 0;
     right: 0;
@@ -338,19 +397,44 @@ onUnmounted(() => {
     justify-content: space-between;
     gap: 1.5rem;
     color: var(--texte);
+    transition: padding 0.25s var(--ease);
 }
 
-.logo { flex-shrink: 0; display: block; }
-.logo-img { display: block; height: 72px; width: auto; transition: height 0.25s; background: #fff; border-radius: 8px; }
-.scrolled .logo-img { height: 68px; }
+.logo { flex-shrink: 0; display: flex; align-items: center; gap: 0.75rem; }
+.logo-img { display: block; height: 72px; width: auto; transition: height 0.25s var(--ease); background: #fff; border-radius: 8px; }
+
+/* Slogan : seulement après scroll */
+.slogan {
+    display: none;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1.25;
+    text-shadow: none;
+}
 
 a { text-decoration: none; color: inherit; }
 ul { list-style: none; margin: 0; padding: 0; }
 
+.i {
+    width: 1.15em;
+    height: 1.15em;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 .droite { display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem; }
+
+/* Recherche : cachée en haut de page, visible après scroll */
+.recherche { display: none; }
 
 /* Rangée du haut */
 .haut { display: flex; gap: 1.5rem; font-weight: 600; font-size: 0.95rem; }
+.haut a { display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
 .haut a:hover { color: var(--accent); }
 .clair .haut a:hover { text-decoration: underline; color: #fff; }
 
@@ -449,25 +533,102 @@ ul { list-style: none; margin: 0; padding: 0; }
     background: none;
     border: 0;
     cursor: pointer;
-    font-size: 1.9rem;
     line-height: 1;
-    padding: 0.3rem 0.5rem;
+    padding: 0.4rem;
+    border-radius: 8px;
     color: inherit;
+    transition: background 0.2s, color 0.2s;
+}
+.burger .i { width: 28px; height: 28px; stroke-width: 2.4; }
+
+/* ======================================================
+   BARRE COMPACTE APRÈS SCROLL
+   logo + slogan | recherche | bandeau coloré | hamburger
+   ====================================================== */
+.scrolled .inner { padding-top: 0.55rem; padding-bottom: 0.55rem; }
+.scrolled .logo-img { height: 52px; }
+.scrolled .slogan { display: block; }
+
+.scrolled .droite { flex: 1; flex-direction: row; align-items: center; justify-content: flex-end; gap: 1rem; }
+.scrolled .bas { display: none; }
+.scrolled .burger { display: block; color: var(--accent); }
+.scrolled .burger:hover { background: #eef6ef; }
+
+/* Champ de recherche arrondi + bouton */
+.scrolled .recherche {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+    min-width: 160px;
+    max-width: 320px;
+    margin-right: auto;
+    border-radius: 99px;
+    overflow: hidden;
+    background: #f1f3f5;
+    transition: box-shadow 0.2s;
+    animation: apparait 0.35s var(--ease) both;
+}
+.recherche:focus-within { box-shadow: 0 0 0 3px rgba(11, 61, 145, 0.3); }
+.recherche input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    font-size: 0.95rem;
+    color: var(--encre);
+    padding: 0.7rem 0.5rem 0.7rem 1.25rem;
+}
+.recherche input::placeholder { color: #6b7a90; }
+.recherche button {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    border: 0;
+    cursor: pointer;
+    background: var(--secondaire);
+    color: #fff;
+    transition: filter 0.2s;
+}
+.recherche button:hover { filter: brightness(1.15); }
+.recherche button .i { width: 22px; height: 22px; }
+
+/* Bandeau coloré avec téléphone / contact / espace client / favoris */
+.scrolled .haut {
+    gap: 1.6rem;
+    padding: 0.75rem 1.4rem;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(0, 112, 19, 0.25);
+    animation: apparait 0.35s var(--ease) both;
+}
+.scrolled .haut a { color: #fff; text-shadow: none; }
+.scrolled .haut a:hover { color: #fff; text-decoration: underline; text-underline-offset: 5px; }
+
+@keyframes apparait {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: none; }
 }
 
-/* Après scroll (ordinateur) ou petit écran : la rangée du bas devient un hamburger */
-.scrolled .droite { flex-direction: row; align-items: center; gap: 1rem; }
-.scrolled .bas { display: none; }
-.scrolled .burger { display: block; }
-
+/* ---------- Responsive ---------- */
+@media (max-width: 1180px) {
+    .scrolled .slogan { display: none; }
+}
 @media (max-width: 1000px) {
     .droite { flex-direction: row; align-items: center; gap: 1rem; }
     .bas { display: none; }
     .burger { display: block; }
     .logo-img { height: 52px; }
+    .scrolled .logo-img { height: 46px; }
+}
+@media (max-width: 900px) {
+    .scrolled .recherche { display: none; }
 }
 @media (max-width: 700px) {
     .cache-petit { display: none; }
+    .scrolled .haut { padding: 0.65rem 1rem; }
 }
 
 /* Panneau hamburger */
@@ -479,6 +640,36 @@ ul { list-style: none; margin: 0; padding: 0; }
     padding: 0.75rem 1.25rem 1.5rem;
     border-top: 1px solid #e3e8f0;
     box-shadow: 0 16px 32px rgba(10, 37, 82, 0.12);
+}
+/* Recherche dans le panneau (utile sur mobile) */
+.recherche-mobile {
+    display: none;
+    margin: 0.25rem 0 0.75rem;
+    border-radius: 99px;
+    overflow: hidden;
+    background: #f1f3f5;
+}
+.recherche-mobile input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    color: var(--encre);
+    padding: 0.75rem 0.5rem 0.75rem 1.25rem;
+}
+.recherche-mobile button {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    border: 0;
+    cursor: pointer;
+    background: var(--secondaire);
+    color: #fff;
+}
+@media (max-width: 900px) {
+    .recherche-mobile { display: flex; }
 }
 .p-lien, .p-groupe summary {
     display: block;
@@ -500,6 +691,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid #f28c00; outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
-    .navbar, .logo-img { transition: none; }
+    .navbar, .logo-img, .inner { transition: none; }
+    .scrolled .recherche, .scrolled .haut { animation: none; }
 }
 </style>
