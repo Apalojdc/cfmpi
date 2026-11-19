@@ -246,7 +246,7 @@ onUnmounted(() => {
                     </li>
 
                     <li class="item" @mouseenter="menuActif = null">
-                        <Link href="/inscription" class="pill">Inscrivez-vous</Link>
+                        <Link href="/register" class="pill">Inscrivez-vous</Link>
                     </li>
                 </ul>
 
